@@ -16,8 +16,8 @@ cliente integer not null,
 foreign key (cliente) references Clientes(clienteID)
 );
 
-Create Table Produtos(
-produtoID integer not null primary key,
+Create Table Materiais(
+materialID integer not null primary key,
 valor decimal(10,2),
 descricao varchar(100)
 );
@@ -25,11 +25,11 @@ descricao varchar(100)
 create table ItensPedido(
 itemID integer not null primary key,
 pedido int not null,
-produto int not null,
+material int not null,
 quantidade int not null,
 valor decimal(10,2) not null,
 foreign key (pedido) references Pedidos(pedidoID),
-foreign key (produto) references Produtos(produtoID)
+foreign key (material) references Materiais(materialID)
 );
 
 Create table Funcionários(
