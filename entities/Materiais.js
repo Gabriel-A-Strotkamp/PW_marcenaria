@@ -6,4 +6,4 @@ class Materiais{
     }
 }
 
-module.exports = ItensPedidos;
+module.exports = Materiais;

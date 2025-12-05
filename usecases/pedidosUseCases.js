@@ -13,5 +13,5 @@ const getPedidosDB = async () => {
 }
 
 module.exports = {
-    getClientesDB
+    getPedidosDB
 }

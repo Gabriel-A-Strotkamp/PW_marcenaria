@@ -1,10 +1,10 @@
 const {Router } = require ('express');
 
-const {getMaterias } = require('../controllers/materiaisController');
+const {getMateriais } = require('../controllers/materiaisController');
 
-const rotasMaterias = new Router();
+const rotasMateriais = new Router();
 
-rotasMaterias.route('/materias')
-    .get(getMaterias)
+rotasMateriais.route('/materiais')
+    .get(getMateriais)
 
-module.exports = {rotasMaterias};
+module.exports = {getMateriais};

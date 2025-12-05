@@ -1,4 +1,5 @@
-import { Materiais } from "./Materiais.js";
+const Materiais = require ('./Materiais')
+
 
 class ItensPedido{
     constructor(itensID, pedido, material, quantidade){
