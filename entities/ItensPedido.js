@@ -1,6 +1,6 @@
 import { Materiais } from "./Materiais.js";
 
-class ItensPedidos{
+class ItensPedido{
     constructor(itensID, pedido, material, quantidade){
         this.itensID = itensID;
         this.pedido = pedido;
@@ -10,4 +10,4 @@ class ItensPedidos{
     }
 }
 
-module.exports = ItensPedidos;
+module.exports = ItensPedido;
