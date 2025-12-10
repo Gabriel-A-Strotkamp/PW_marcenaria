@@ -14,7 +14,7 @@ if(ISProduction) {
         user: 'postgres',
         host: 'localhost',
         database: 'bd_marcenaria',
-        password: 'postgres',
+        password: '1808amor', //1808amor
         port: 5432
     })
 }
