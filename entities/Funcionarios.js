@@ -1,11 +1,12 @@
-class Funcionarios{
-    constructor(funcionarioID, nome, cpf, senha, cargo){
-        this.funcionarioID = funcionarioID;
+class Funcionario {
+    constructor(id, nome, cpf, senha, cargo, telefone) {
+        this.id = id;
         this.nome = nome;
         this.cpf = cpf;
         this.senha = senha;
         this.cargo = cargo;
+        this.telefone = telefone;
     }
 }
 
-module.exports = Funcionarios;
+module.exports = Funcionario;

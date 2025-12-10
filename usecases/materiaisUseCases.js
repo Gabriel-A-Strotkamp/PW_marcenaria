@@ -1,59 +1,87 @@
-const {pool} = require('../config');
-const Materiais = require ('../entities/Materiais')
+const { pool } = require('../config');
+const Materiais = require('../entities/Materiais');
 
+// GET ALL
 const getMateriaisDB = async () => {
-    try{
+    try {
         const { rows } = await pool.query('SELECT * FROM Materiais ORDER BY descricao');
-        return rows.map((Materiais) => new Materiais(Materiais.descricao, Materiais.valor));
-    }catch (err) {
-        throw "Erro : " + err;
+        return rows.map(m => new Materiais(m.materialid, m.valor, m.descricao));
+    } catch (err) {
+        throw "Erro ao listar materiais: " + err;
     }
-}
-const addMateriaisDB = async (body) => {
-    try {   
-        const { nome } = body; 
-        const results = await pool.query(`INSERT INTO Materiais (descricao) 
-            VALUES ($1)
-            returning materialID, descricao, valor`,
-        [nome]);
-        const materiais = results.rows[0];
-        return new materiais(materiais.materialID, materiais.descricao, materiais.valor); 
-    } catch (err) {
-        throw "Erro ao inserir o cliente: " + err;
-    }    
-}
+};
 
+// GET BY ID
+const getMaterialByIdDB = async (id) => {
+    try {
+        const { rows } = await pool.query('SELECT * FROM Materiais WHERE materialID = $1', [id]);
+        if (rows.length === 0) return null;
 
-const updateMateriasDB = async (body) => {
-    try {   
-        const {descricao, valor}  = body; 
-        const results = await pool.query(`UPDATE Materias set valor = $3 where descricao = $2 where materialID = $1
-        returning, materialID, descricao, valor`,
-        [materialID, descricao, valor]);        
-        if (results.rowCount == 0){
-            throw `Nenhum registro encontrado com o id ${materialID} para ser alterado`;
-        }
-        const Materiais = results.rows[0];
-        return new Materiais(Materiais.materialID, Materiais.descricao, materiais.valor); 
+        const m = rows[0];
+        return new Materiais(m.materialid, m.valor, m.descricao);
     } catch (err) {
-        throw "Erro ao alterar o Material: " + err;
-    }      
-}
+        throw "Erro ao buscar material: " + err;
+    }
+};
 
-const deleteMateriaisDB = async (materialID) => {
-    try {           
-        const results = await pool.query(`DELETE FROM materiais where materialID = $1`,
-        [materialID]);
-        if (results.rowCount == 0){
-            throw `Nenhum registro encontrado com o id ${materialID} para ser removido`;
-        } else {
-            return "material removida com sucesso";
-        }       
+// INSERT
+const addMaterialDB = async (body) => {
+    try {
+        const { valor, descricao } = body;
+
+        const { rows } = await pool.query(
+            `INSERT INTO Materiais (valor, descricao)
+             VALUES ($1, $2)
+             RETURNING *`,
+            [valor, descricao]
+        );
+
+        const m = rows[0];
+        return new Materiais(m.materialid, m.valor, m.descricao);
     } catch (err) {
-        throw "Erro ao remover o Mateiral: " + err;
-    }     
-}
+        throw "Erro ao inserir material: " + err;
+    }
+};
+
+// UPDATE
+const updateMaterialDB = async (body) => {
+    try {
+        const { materialId, valor, descricao } = body;
+
+        const { rows, rowCount } = await pool.query(
+            `UPDATE Materiais SET valor = $2, descricao = $3
+             WHERE materialID = $1
+             RETURNING *`,
+            [materialId, valor, descricao]
+        );
+
+        if (rowCount === 0) throw `Material ${materialId} não encontrado.`;
+
+        const m = rows[0];
+        return new Materiais(m.materialid, m.valor, m.descricao);
+    } catch (err) {
+        throw "Erro ao atualizar material: " + err;
+    }
+};
+
+// DELETE
+const deleteMaterialDB = async (id) => {
+    try {
+        const results = await pool.query('DELETE FROM Materiais WHERE materialID = $1', [id]);
+
+        if (results.rowCount === 0)
+            throw `Material ${id} não encontrado para excluir.`;
+
+        return "Material removido com sucesso.";
+    } catch (err) {
+        throw "Erro ao remover material: " + err;
+    }
+};
 
 module.exports = {
-    getMateriaisDB, addMateriaisDB, updateMateriasDB, deleteMateriaisDB
-}
+    getMateriaisDB,
+    getMaterialByIdDB,
+    addMaterialDB,
+    updateMaterialDB,
+    deleteMaterialDB
+};

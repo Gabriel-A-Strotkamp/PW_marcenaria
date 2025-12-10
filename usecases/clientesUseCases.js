@@ -1,59 +1,86 @@
-const {pool} = require('../config');
-const Clientes = require ('../entities/Clientes')
+const { pool } = require('../config');
+const Clientes = require('../entities/Clientes');
 
+// GET ALL
 const getClientesDB = async () => {
-    try{
+    try {
         const { rows } = await pool.query('SELECT * FROM Clientes ORDER BY nome');
-        return rows.map((Clientes) => new Clientes(Clientes.clienteID, Clientes.nome));   
-    }catch (err) {
-        throw "Erro : " + err;
+        return rows.map(c => new Clientes(c.clienteid, c.nome, c.telefone, c.endereco, c.cpf));
+    } catch (err) {
+        throw "Erro ao listar clientes: " + err;
     }
-}
+};
+
+// GET BY ID
+const getClienteByIdDB = async (id) => {
+    try {
+        const { rows } = await pool.query('SELECT * FROM Clientes WHERE clienteId = $1', [id]);
+        if (rows.length === 0) return null;
+        const c = rows[0];
+        return new Clientes(c.clienteid, c.nome, c.telefone, c.endereco, c.cpf);
+    } catch (err) {
+        throw "Erro ao buscar cliente: " + err;
+    }
+};
+
+// INSERT
 const addClientesDB = async (body) => {
-    try {   
-        const { nome } = body; 
-        const results = await pool.query(`INSERT INTO clientes (nome) 
-            VALUES ($1)
-            returning clienteID, nome`,
-        [nome]);
-        const Clientes = results.rows[0];
-        return new Clientes(cliente.clienteID, cliente.nome); 
+    try {
+        const { nome, telefone, endereco, cpf } = body;
+
+        const { rows } = await pool.query(
+            `INSERT INTO Clientes (nome, telefone, endereco, cpf)
+             VALUES ($1, $2, $3, $4)
+             RETURNING *`,
+            [nome, telefone, endereco, cpf]
+        );
+
+        const c = rows[0];
+        return new Clientes(c.clienteid, c.nome, c.telefone, c.endereco, c.cpf);
     } catch (err) {
-        throw "Erro ao inserir o cliente: " + err;
-    }    
-}
+        throw "Erro ao inserir cliente: " + err;
+    }
+};
 
-
+// UPDATE
 const updateClientesDB = async (body) => {
-    try {   
-        const { clienteID, nome }  = body; 
-        const results = await pool.query(`UPDATE Clientes set nome = $2 where clienteID = $1 
-        returning clienteID, nome`,
-        [clienteID, nome]);        
-        if (results.rowCount == 0){
-            throw `Nenhum registro encontrado com o id ${clienteID} para ser alterado`;
-        }
-        const Clientes = results.rows[0];
-        return new Clientes(clientes.clienteID, clientes.nome); 
-    } catch (err) {
-        throw "Erro ao alterar o cliente: " + err;
-    }      
-}
+    try {
+        const { clienteId, nome, telefone, endereco, cpf } = body;
 
-const deleteclienteDB = async (clienteID) => {
-    try {           
-        const results = await pool.query(`DELETE FROM clientes where clienteID = $1`,
-        [clienteID]);
-        if (results.rowCount == 0){
-            throw `Nenhum registro encontrado com o id ${clienteID} para ser removido`;
-        } else {
-            return "cliente removida com sucesso";
-        }       
+        const { rows, rowCount } = await pool.query(
+            `UPDATE Clientes SET nome = $2, telefone = $3, endereco = $4, cpf = $5
+             WHERE clienteId = $1
+             RETURNING *`,
+            [clienteId, nome, telefone, endereco, cpf]
+        );
+
+        if (rowCount === 0) throw `Cliente ${clienteId} não encontrado.`;
+
+        const c = rows[0];
+        return new Clientes(c.clienteid, c.nome, c.telefone, c.endereco, c.cpf);
     } catch (err) {
-        throw "Erro ao remover o cliente: " + err;
-    }     
-}
+        throw "Erro ao atualizar cliente: " + err;
+    }
+};
+
+// DELETE
+const deleteClienteDB = async (id) => {
+    try {
+        const results = await pool.query('DELETE FROM Clientes WHERE clienteId = $1', [id]);
+
+        if (results.rowCount === 0)
+            throw `Cliente ${id} não encontrado para excluir.`;
+
+        return "Cliente removido com sucesso.";
+    } catch (err) {
+        throw "Erro ao remover cliente: " + err;
+    }
+};
 
 module.exports = {
-    getClientesDB, addClientesDB, updateClientesDB, deleteclienteDB
-}
+    getClientesDB,
+    getClienteByIdDB,
+    addClientesDB,
+    updateClientesDB,
+    deleteClienteDB
+};

@@ -1,13 +1,10 @@
-const Materiais = require ('./Materiais')
-
-
-class ItensPedido{
-    constructor(itensID, pedido, material, quantidade){
-        this.itensID = itensID;
+class ItensPedido {
+    constructor(itemId, pedido, material, quantidade, valor) {
+        this.itemId = itemId;
         this.pedido = pedido;
         this.material = material;
         this.quantidade = quantidade;
-        this.valor = (console.log(Materiais.valor) * quantidade);
+        this.valor = valor;
     }
 }
 

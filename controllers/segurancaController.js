@@ -1,32 +1,51 @@
-const {autentocaUsuarioDB} = require('../usecases/segurancaUseCases');
+// controllers/segurancaController.js
+const { autentocaUsuarioDB } = require('../usecases/segurancaUseCases');
 require('dotenv-safe').config();
 const jwt = require('jsonwebtoken');
 
 const login = async (request, response) => {
-    await autentocaUsuarioDB(request.body)
-        .then(funcionaios => {
-            const token = jwt.sign({funcionaios}, process.env.SECRET, {
-                expiresIN: 300 //expira em 5min
-            })
-            return response.json({auth: true, token: token })
-        })
-        .catch(err => response.status(401).json({auth: false, message: err }));
+    try {
+        const funcionario = await autentocaUsuarioDB(request.body);
 
-}
-// verificação do token
+        // Gerar token com cargo e ID do funcionário
+        const token = jwt.sign(
+            {
+                id: funcionario.funcionarioid,
+                nome: funcionario.nome,
+                cargo: funcionario.cargo
+            },
+            process.env.SECRET,
+            { expiresIn: 300 } // 5 minutos
+        );
+
+        return response.json({
+            auth: true,
+            token: token
+        });
+
+    } catch (err) {
+        return response.status(401).json({
+            auth: false,
+            message: err
+        });
+    }
+};
+
+// Middleware para validar token
 function verificaJWT(request, response, next) {
     const token = request.headers['authorization'];
-    if (!token) return response.status(401).json({ auth: false, message: 'Nenhum token recebido.' });
 
-    jwt.verify(token, process.env.SECRET, function (err, decoded) {
-        if (err) return response.status(401).json({ auth: false, message: 'Erro ao autenticar o token.' });
-        // Se o token for válido, salva no request para uso posterior
-        console.log("Funcionario: " + JSON.stringify(decoded.funcionaios));
-        request.funcionaios = decoded.funcionaios;
+    if (!token)
+        return response.status(401).json({ auth: false, message: 'Nenhum token recebido.' });
+
+    jwt.verify(token, process.env.SECRET, (err, decoded) => {
+        if (err)
+            return response.status(401).json({ auth: false, message: 'Token inválido.' });
+
+        console.log("Funcionário autenticado:", decoded);
+        request.funcionarioLogado = decoded;
         next();
     });
 }
 
-module.exports = {
-    login, verificaJWT
-}
+module.exports = { login, verificaJWT };
