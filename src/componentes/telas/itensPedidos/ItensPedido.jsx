@@ -10,8 +10,11 @@ import {
 
 import Tabela from "./Tabela";
 import Formulario from "./formulario";
+import { useNavigate } from "react-router-dom";
 
 function ItensPedido() {
+
+    let navigate = useNavigate();
 
     const [carregando, setCarregando] = useState(true);
     const [alerta, setAlerta] = useState({ status: "", message: "" });
@@ -29,9 +32,14 @@ function ItensPedido() {
     });
 
     const recuperaItens = async () => {
+        try {
          setCarregando(true);
         setListaObjetos(await getItensPedidoAPI());
          setCarregando(false);
+          } catch (err) {
+            // tratamento para ir para a tela de login em caso de erro
+            navigate("/login", { replace: true });
+        }
     };
 
     const novoObjeto = () => {
@@ -48,21 +56,31 @@ function ItensPedido() {
     };
 
     const editarObjeto = async codigo => {
+        try {
         setObjeto(await getItemPedidoPorCodigoAPI(codigo));
         setEditar(true);
         setExibirForm(true);
+         } catch (err) {
+            // tratamento para ir para a tela de login em caso de erro
+            navigate("/login", { replace: true });
+        }
     };
 
     const acaoCadastrar = async e => {
         e.preventDefault();
         const metodo = editar ? "PUT" : "POST";
+        try {
 
         let retornoAPI = await cadastraItemPedidoAPI(objeto, metodo);
         setAlerta({ status: retornoAPI.status, message: retornoAPI.message });
         setObjeto(retornoAPI.objeto);
 
         if (!editar) setEditar(true);
-
+        } catch (err) {
+            console.log("Erro: " + err);
+            // tratamento para ir para a tela de login em caso de erro
+            navigate("/login", { replace: true });
+        }
         recuperaItens();
     };
 
@@ -72,10 +90,15 @@ function ItensPedido() {
     };
 
     const remover = async codigo => {
+        try {
         if (window.confirm("Deseja remover este item do pedido?")) {
             let retornoAPI = await deleteItemPedidoPorCodigoAPI(codigo);
             setAlerta({ status: retornoAPI.status, message: retornoAPI.message });
             recuperaItens();
+        }
+         } catch (err) {
+            // tratamento para ir para a tela de login em caso de erro
+            navigate("/login", { replace: true });
         }
     };
 

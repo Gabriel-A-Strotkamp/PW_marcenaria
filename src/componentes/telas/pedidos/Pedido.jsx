@@ -10,8 +10,11 @@ import {
 
 import Tabela from "./tabela";
 import Formulario from "./formulario";
+import { useNavigate } from "react-router-dom";
 
 function Pedidos() {
+
+    let navigate = useNavigate();
 
     const [carregando, setCarregando] = useState(true);
     const [alerta, setAlerta] = useState({ status: "", message: "" });
@@ -30,9 +33,14 @@ function Pedidos() {
     });
 
     const recuperaPedidos = async () => {
+        try {
          setCarregando(true);
         setListaObjetos(await getPedidosAPI());
          setCarregando(false);
+          } catch (err) {
+            // tratamento para ir para a tela de login em caso de erro
+            navigate("/login", { replace: true });
+        }
     };
 
     const novoObjeto = () => {
@@ -50,10 +58,15 @@ function Pedidos() {
     };
 
     const editarObjeto = async codigo => {
+        try {
         setObjeto(await getPedidoPorCodigoAPI(codigo));
         setEditar(true);
         setAlerta({ status: "", message: "" });
         setExibirForm(true);
+         } catch (err) {
+            // tratamento para ir para a tela de login em caso de erro
+            navigate("/login", { replace: true });
+        }
     };
 
     const acaoCadastrar = async e => {
@@ -70,6 +83,7 @@ function Pedidos() {
             recuperaPedidos();
         } catch (error) {
             console.error(error);
+            navigate("/login", { replace: true });
         }
     };
 
@@ -80,10 +94,15 @@ function Pedidos() {
     };
 
     const remover = async codigo => {
+        try {
         if (window.confirm("Deseja remover este pedido?")) {
             let retornoAPI = await deletePedidoPorCodigoAPI(codigo);
             setAlerta({ status: retornoAPI.status, message: retornoAPI.message });
             recuperaPedidos();
+        }
+         } catch (err) {
+            // tratamento para ir para a tela de login em caso de erro
+            navigate("/login", { replace: true });
         }
     };
 

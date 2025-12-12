@@ -10,8 +10,11 @@ import {
 
 import Tabela from "./Tabela";
 import Formulario from "./formulario";
+import { useNavigate } from "react-router-dom";
 
 function Materiais() {
+
+    let navigate = useNavigate();
 
     const [carregando, setCarregando] = useState(true);
     const [alerta, setAlerta] = useState({ status: "", message: "" });
@@ -27,9 +30,14 @@ function Materiais() {
     });
 
     const recuperaMateriais = async () => {
+        try {
          setCarregando(true);
         setListaObjetos(await getMateriaisAPI());
          setCarregando(false);
+          } catch (err) {
+            // tratamento para ir para a tela de login em caso de erro
+            navigate("/login", { replace: true });
+        }
     };
 
     const novoObjeto = () => {
@@ -44,12 +52,18 @@ function Materiais() {
     };
 
     const editarObjeto = async codigo => {
+        try {
         setObjeto(await getMaterialPorCodigoAPI(codigo));
         setEditar(true);
         setExibirForm(true);
+         } catch (err) {
+            // tratamento para ir para a tela de login em caso de erro
+            navigate("/login", { replace: true });
+        }
     };
 
     const acaoCadastrar = async e => {
+        try {
         e.preventDefault();
         const metodo = editar ? "PUT" : "POST";
 
@@ -58,7 +72,11 @@ function Materiais() {
         setObjeto(retornoAPI.objeto);
 
         if (!editar) setEditar(true);
-
+        } catch (err) {
+            console.log("Erro: " + err);
+            // tratamento para ir para a tela de login em caso de erro
+            navigate("/login", { replace: true });
+        }
         recuperaMateriais();
     };
 
@@ -68,10 +86,15 @@ function Materiais() {
     };
 
     const remover = async codigo => {
+        try {
         if (window.confirm("Deseja remover este material?")) {
             let retornoAPI = await deleteMaterialPorCodigoAPI(codigo);
             setAlerta({ status: retornoAPI.status, message: retornoAPI.message });
             recuperaMateriais();
+        }
+         } catch (err) {
+            // tratamento para ir para a tela de login em caso de erro
+            navigate("/login", { replace: true });
         }
     };
 

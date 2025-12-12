@@ -10,9 +10,12 @@ import {
 import Tabela from './tabela';
 import Formulario from './formulario';
 import Carregando from '../../comuns/carregando';
+import { useNavigate } from "react-router-dom";
 
 function Clientes() {
     
+    let navigate = useNavigate();
+
     const [carregando, setCarregando] = useState(true);
     const [alerta, setAlerta] = useState({ status: "", message: "" });
     const [listaObjetos, setListaObjetos] = useState([]);
@@ -29,9 +32,14 @@ function Clientes() {
     });
 
     const recuperaClientes = async () => {
+        try {
          setCarregando(true);
         setListaObjetos(await getClientesAPI());
          setCarregando(false);
+          } catch (err) {
+            // tratamento para ir para a tela de login em caso de erro
+            navigate("/login", { replace: true });
+        }
     }
 
     const novoObjeto = () => {
@@ -42,10 +50,15 @@ function Clientes() {
     }
 
     const editarObjeto = async (id) => {
+        try {
         setObjeto(await getClientePorCodigoAPI(id));
         setEditar(true);
         setAlerta({ status: "", message: "" });
         setExibirForm(true);
+         } catch (err) {
+            // tratamento para ir para a tela de login em caso de erro
+            navigate("/login", { replace: true });
+        }
     }
 
     const acaoCadastrar = async (e) => {
@@ -59,6 +72,7 @@ function Clientes() {
             if (!editar) setEditar(true);
         } catch (err) {
             console.error(err);
+            navigate("/login", { replace: true });
         }
         recuperaClientes();
     }
@@ -69,10 +83,15 @@ function Clientes() {
     }
 
     const remover = async (id) => {
+        try {
         if (window.confirm("Deseja remover este cliente?")) {
             const retornoAPI = await deleteClientePorCodigoAPI(id);
             setAlerta({ status: retornoAPI.status, message: retornoAPI.message });
             recuperaClientes();
+        }
+         } catch (err) {
+            // tratamento para ir para a tela de login em caso de erro
+            navigate("/login", { replace: true });
         }
     }
 

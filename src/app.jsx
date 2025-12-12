@@ -14,11 +14,13 @@ import Pedido from "./componentes/telas/pedidos/Pedido";
 import Funcionario from "./componentes/telas/funcionarios/Funcionario";
 import Material from "./componentes/telas/materiais/Material";
 import ItemPedido from "./componentes/telas/itenspedido/ItemPedido";
+import MenuPublico from './componentes/MenuPublico';
+import MenuPrivado from './componentes/MenuPrivado';
 
 const router = createBrowserRouter([
   {
     path: "/",
-    element: <Menu />,
+    element: <MeMenuPublico />,
     children: [
       {
         index: true,
@@ -28,7 +30,14 @@ const router = createBrowserRouter([
         path: "/sobre",
         element: <Sobre />,
       },
+      {
+        path : "login",
+        element :  <Login/>
+      }]},
       // Rotas do projeto
+       {path: "/privado",
+        element: <MenuPrivado />,
+        children: [
       {
         path: "/clientes",
         element: <Cliente />,
