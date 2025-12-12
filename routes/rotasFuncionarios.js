@@ -6,7 +6,7 @@ const {
     addFuncionarios,
     updateFuncionarios,
     deleteFuncionarios
-} = require('../controllers/funcionariosController');
+} = require('../controllers/funcionarioController');
 
 // Todas as rotas daqui já passam pelo middleware gerenteOnly na classe principal
 
