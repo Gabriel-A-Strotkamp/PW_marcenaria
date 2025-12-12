@@ -13,6 +13,7 @@ import Formulario from "./formulario";
 
 function Pedidos() {
 
+    const [carregando, setCarregando] = useState(true);
     const [alerta, setAlerta] = useState({ status: "", message: "" });
     const [listaObjetos, setListaObjetos] = useState([]);
 
@@ -29,7 +30,9 @@ function Pedidos() {
     });
 
     const recuperaPedidos = async () => {
+         setCarregando(true);
         setListaObjetos(await getPedidosAPI());
+         setCarregando(false);
     };
 
     const novoObjeto = () => {
@@ -97,7 +100,9 @@ function Pedidos() {
             novoObjeto, editarObjeto,
             acaoCadastrar, handleChange
         }}>
-            <Tabela />
+            <Carregando carregando={carregando}>
+                <Tabela />
+            </Carregando>
             <Formulario />
         </PedidosContext.Provider>
     );

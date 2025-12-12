@@ -9,9 +9,11 @@ import {
 
 import Tabela from './tabela';
 import Formulario from './formulario';
+import Carregando from '../../comuns/carregando';
 
 function Clientes() {
-
+    
+    const [carregando, setCarregando] = useState(true);
     const [alerta, setAlerta] = useState({ status: "", message: "" });
     const [listaObjetos, setListaObjetos] = useState([]);
 
@@ -27,7 +29,9 @@ function Clientes() {
     });
 
     const recuperaClientes = async () => {
+         setCarregando(true);
         setListaObjetos(await getClientesAPI());
+         setCarregando(false);
     }
 
     const novoObjeto = () => {
@@ -80,7 +84,9 @@ function Clientes() {
             objeto, editarObjeto, novoObjeto,
             acaoCadastrar, handleChange, exibirForm, setExibirForm
         }}>
-            <Tabela />
+            <Carregando carregando={carregando}>
+	                    <Tabela />
+            </Carregando>
             <Formulario />
         </ClientesContext.Provider>
     );

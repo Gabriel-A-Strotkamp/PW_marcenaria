@@ -10,11 +10,14 @@ import Formulario from './Formulario';
 
 function Funcionarios() {
 
+    const [carregando, setCarregando] = useState(true);
     const [alerta, setAlerta] = useState({ status: "", message: "" });
     const [listaObjetos, setListaObjetos] = useState([]);
 
     const recuperaFuncionarios = async () => {
+         setCarregando(true);
         setListaObjetos(await getFuncionariosAPI());
+         setCarregando(false);
     }
 
     const remover = async codigo => {
@@ -35,7 +38,9 @@ function Funcionarios() {
             listaObjetos,
             remover
         }}>
-            <Tabela />
+            <Carregando carregando={carregando}>
+                                    <Tabela />
+                        </Carregando>
             <Formulario />
         </FuncionariosContext.Provider>
     );

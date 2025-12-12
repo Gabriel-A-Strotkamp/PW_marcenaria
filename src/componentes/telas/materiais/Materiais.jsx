@@ -13,6 +13,7 @@ import Formulario from "./formulario";
 
 function Materiais() {
 
+    const [carregando, setCarregando] = useState(true);
     const [alerta, setAlerta] = useState({ status: "", message: "" });
     const [listaObjetos, setListaObjetos] = useState([]);
 
@@ -26,7 +27,9 @@ function Materiais() {
     });
 
     const recuperaMateriais = async () => {
+         setCarregando(true);
         setListaObjetos(await getMateriaisAPI());
+         setCarregando(false);
     };
 
     const novoObjeto = () => {
@@ -85,7 +88,9 @@ function Materiais() {
             novoObjeto, editarObjeto,
             acaoCadastrar, handleChange
         }}>
-            <Tabela />
+            <Carregando carregando={carregando}>
+                <Tabela />
+            </Carregando>
             <Formulario />
         </MateriaisContext.Provider>
     );

@@ -28,10 +28,12 @@ function Funcionarios() {
         telefone: ""
     });
 
+    // Carrega funcionários
     const recuperaFuncionarios = async () => {
         setListaObjetos(await getFuncionariosAPI());
     };
 
+    // Novo cadastro
     const novoObjeto = () => {
         setEditar(false);
         setObjeto({
@@ -46,6 +48,7 @@ function Funcionarios() {
         setExibirForm(true);
     };
 
+    // Editar registro
     const editarObjeto = async codigo => {
         setObjeto(await getFuncionarioPorCodigoAPI(codigo));
         setEditar(true);
@@ -53,11 +56,13 @@ function Funcionarios() {
         setAlerta({ status: "", message: "" });
     };
 
+    // Salvar
     const acaoCadastrar = async e => {
         e.preventDefault();
-        const metodo = editar ? "PUT" : "POST";
 
+        let metodo = editar ? "PUT" : "POST";
         let retornoAPI = await cadastraFuncionarioAPI(objeto, metodo);
+
         setAlerta({ status: retornoAPI.status, message: retornoAPI.message });
         setObjeto(retornoAPI.objeto);
 
@@ -66,11 +71,13 @@ function Funcionarios() {
         recuperaFuncionarios();
     };
 
+    // Atualiza estado dos inputs
     const handleChange = e => {
         const { name, value } = e.target;
         setObjeto({ ...objeto, [name]: value });
     };
 
+    // Remover
     const remover = async codigo => {
         if (window.confirm("Deseja remover este funcionário?")) {
             let retornoAPI = await deleteFuncionarioPorCodigoAPI(codigo);
@@ -90,7 +97,8 @@ function Funcionarios() {
             remover,
             objeto, editar, exibirForm,
             novoObjeto, editarObjeto,
-            acaoCadastrar, handleChange
+            acaoCadastrar, handleChange,
+            setExibirForm
         }}>
             <Tabela />
             <Formulario />
