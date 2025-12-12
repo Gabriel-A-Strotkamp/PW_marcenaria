@@ -61,7 +61,7 @@ INSERT INTO ItensPedido (itemID, pedido, material, quantidade, valor) VALUES
 (2, 1, 3, 1, 220.00),
 (3, 2, 1, 2, 300.00);
 
-INSERT INTO Funcionários (id, nome, cpf, senha, cargo, telefone) VALUES
+INSERT INTO Funcionarios (id, nome, cpf, senha, cargo, telefone) VALUES
 (1, 'Fernanda Lopes', '22233344455', 'abcd1234', 'G', '53999456789'),
 (2, 'Ricardo Moura', '33344455566', 'mnpq5678', 'F', '53999567890'),
 (3, 'Ana Costa', '44455566677', 'zxyw4321', 'S', '53999678901');

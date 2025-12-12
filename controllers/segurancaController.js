@@ -1,49 +1,38 @@
 // controllers/segurancaController.js
-const { autentocaUsuarioDB } = require('../usecases/segurancaUseCases');
+const { autenticaFuncionarioDB } = require('../usecases/segurancaUseCases');
 require('dotenv-safe').config();
 const jwt = require('jsonwebtoken');
 
 const login = async (request, response) => {
     try {
-        const funcionario = await autentocaUsuarioDB(request.body);
+        await autenticaFuncionarioDB(request.body)
+        .then(funcionario => {
 
-        // Gerar token com cargo e ID do funcionário
         const token = jwt.sign(
-            {
-                id: funcionario.funcionarioid,
-                nome: funcionario.nome,
-                cargo: funcionario.cargo
-            },
-            process.env.SECRET,
-            { expiresIn: 300 } // 5 minutos
+            {funcionario}, process.env.SECRET,
+            { expiresIn: 300 } // 5 min
         );
 
-        return response.json({
-            auth: true,
-            token: token
-        });
-
+        return response.json({ auth: true, token });
+    })
     } catch (err) {
-        return response.status(401).json({
-            auth: false,
-            message: err
-        });
+        return response.status(401).json({ auth: false, message: err });
     }
 };
 
-// Middleware para validar token
+// Middleware
 function verificaJWT(request, response, next) {
     const token = request.headers['authorization'];
 
     if (!token)
         return response.status(401).json({ auth: false, message: 'Nenhum token recebido.' });
 
-    jwt.verify(token, process.env.SECRET, (err, decoded) => {
+    jwt.verify(token, process.env.SECRET, function (err, decoded) {
         if (err)
-            return response.status(401).json({ auth: false, message: 'Token inválido.' });
-
-        console.log("Funcionário autenticado:", decoded);
-        request.funcionarioLogado = decoded;
+            return response.status(401).json({ auth: false, message: 'Token inválido.'});
+        
+        console.log("Funcionario: " + JSON.stringify(decoded.funcionario));
+        request.funcionarioLogado = decoded.funcionario;
         next();
     });
 }

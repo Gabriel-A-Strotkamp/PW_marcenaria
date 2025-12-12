@@ -1,12 +1,23 @@
 const {Router } = require ('express');
 
-const {getItensPedido } = require('../controllers/itensPedidoController');
+const {getItensPedido, getItemPedidoById, addItemPedido, updateItemPedido, deleteItemPedido } = require('../controllers/itensPedidoController');
 
 const {verificaJWT} = require('../controllers/segurancaController')
 
 const rotasItensPedido = new Router();
 
-rotasItensPedido.route('/itensPedido')
-    .get(verificaJWT, getItensPedido)
+rotasItensPedido.get('/itensPedido',verificaJWT, getItensPedido);
+
+// BUSCAR POR ID
+rotasItensPedido.get('/itensPedido/:id',verificaJWT, getItemPedidoById);
+
+// INSERIR
+rotasItensPedido.post('/itensPedido',verificaJWT, addItemPedido);
+
+// ALTERAR
+rotasItensPedido.put('/itensPedido',verificaJWT, updateItemPedido);
+
+// REMOVER
+rotasItensPedido.delete('/itensPedido/:id', verificaJWT, deleteItemPedido);
 
 module.exports = {rotasItensPedido};

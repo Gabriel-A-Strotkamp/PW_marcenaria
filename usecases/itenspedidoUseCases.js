@@ -4,23 +4,60 @@ const ItensPedido = require('../entities/ItensPedido');
 // GET ALL
 const getItensPedidoDB = async () => {
     try {
-        const { rows } = await pool.query('SELECT * FROM ItensPedido ORDER BY itemID');
+        const { rows } = await pool.query(`
+            SELECT 
+                i.itemID,
+                i.pedido,
+                i.material,
+                m.descricao AS material_descricao,
+                i.quantidade,
+                i.valor
+            FROM ItensPedido i
+            JOIN Materiais m ON m.materialID = i.material
+            ORDER BY i.itemID
+        `);
+
         return rows.map(i =>
-            new ItensPedido(i.itemid, i.pedido, i.material, i.quantidade, i.valor)
+            new ItensPedido(
+                i.itemid,
+                i.pedido,
+                i.material_descricao, // <<< agora passa a descrição
+                i.quantidade,
+                i.valor
+            )
         );
     } catch (err) {
         throw "Erro ao listar itens: " + err;
     }
 };
 
+
 // GET BY ID
 const getItemPedidoByIdDB = async (id) => {
     try {
-        const { rows } = await pool.query('SELECT * FROM ItensPedido WHERE itemID = $1', [id]);
+        const { rows } = await pool.query(`
+            SELECT 
+                i.itemID,
+                i.pedido,
+                i.material,
+                m.descricao AS material_descricao,
+                i.quantidade,
+                i.valor
+            FROM ItensPedido i
+            JOIN Materiais m ON m.materialID = i.material
+            WHERE i.itemID = $1
+        `, [id]);
+
         if (rows.length === 0) return null;
 
         const i = rows[0];
-        return new ItensPedido(i.itemid, i.pedido, i.material, i.quantidade, i.valor);
+        return new ItensPedido(
+            i.itemid,
+            i.pedido,
+            i.material_descricao, // <<< descrição do material
+            i.quantidade,
+            i.valor
+        );
     } catch (err) {
         throw "Erro ao buscar item: " + err;
     }

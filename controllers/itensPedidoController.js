@@ -1,15 +1,68 @@
-const { request, response } = require('express')
-const {getItensPedidodb} = require ('../usecases/itenspedidoUseCases')
+const {
+    getItensPedidoDB,
+    getItemPedidoByIdDB,
+    addItemPedidoDB,
+    updateItemPedidoDB,
+    deleteItemPedidoDB
+} = require('../usecases/itenspedidoUseCases');
 
-const getItensPedido = async (request, response) => {
-    await getItensPedidodb()
-        .then(data => response.statul(200).json(data))
-        .then(err => response.status(400).json({
-            status: 'error',
-            message: 'Erro ao consultar as categorias: ' + err
-        }));
-}
+// GET ALL
+const getItensPedido = async (req, res) => {
+    try {
+        const data = await getItensPedidoDB();
+        res.status(200).json(data);
+    } catch (err) {
+        res.status(400).json({ message: err });
+    }
+};
+
+// GET BY ID
+const getItemPedidoById = async (req, res) => {
+    try {
+        const item = await getItemPedidoByIdDB(req.params.id);
+        if (!item)
+            return res.status(404).json({ message: 'Item não encontrado' });
+
+        res.status(200).json(item);
+    } catch (err) {
+        res.status(400).json({ message: err });
+    }
+};
+
+// INSERT
+const addItemPedido = async (req, res) => {
+    try {
+        const novo = await addItemPedidoDB(req.body);
+        res.status(201).json(novo);
+    } catch (err) {
+        res.status(400).json({ message: err });
+    }
+};
+
+// UPDATE
+const updateItemPedido = async (req, res) => {
+    try {
+        const atualizado = await updateItemPedidoDB(req.body);
+        res.status(200).json(atualizado);
+    } catch (err) {
+        res.status(400).json({ message: err });
+    }
+};
+
+// DELETE
+const deleteItemPedido = async (req, res) => {
+    try {
+        const msg = await deleteItemPedidoDB(req.params.id);
+        res.status(200).json({ message: msg });
+    } catch (err) {
+        res.status(400).json({ message: err });
+    }
+};
 
 module.exports = {
-    getItensPedido
-}
+    getItensPedido,
+    getItemPedidoById,
+    addItemPedido,
+    updateItemPedido,
+    deleteItemPedido
+};

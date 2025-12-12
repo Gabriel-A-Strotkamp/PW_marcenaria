@@ -10,6 +10,6 @@ module.exports = (req, res, next) => {
 
         next();
     } catch (err) {
-        return res.status(403).json({ erro: "Acesso negado." });
+        return res.status(403).json({ erro: "Acesso negado."});
     }
 };

@@ -1,12 +1,30 @@
-const {Router } = require ('express');
+const { Router } = require('express');
 
-const {getClientes } = require('../controllers/clientesController');
+const { 
+    getClientes,
+    getClienteById,
+    addCliente,
+    updateCliente,
+    deleteCliente
+} = require('../controllers/clientesController');
 
-const {verificaJWT} = require('../controllers/segurancaController')
+const { verificaJWT } = require('../controllers/segurancaController');
 
 const rotasClientes = new Router();
 
-rotasClientes.route('/clientes')
-    .get(verificaJWT, getClientes)
+// LISTAR TODOS
+rotasClientes.get('/clientes', verificaJWT, getClientes);
 
-module.exports = {rotasClientes};
+// BUSCAR POR ID
+rotasClientes.get('/clientes/:id',verificaJWT, getClienteById);
+
+// INSERIR
+rotasClientes.post('/clientes',verificaJWT, addCliente);
+
+// ALTERAR
+rotasClientes.put('/clientes',verificaJWT, updateCliente);
+
+// REMOVER
+rotasClientes.delete('/clientes/:id',verificaJWT, deleteCliente);
+
+module.exports = { rotasClientes };

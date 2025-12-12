@@ -13,8 +13,8 @@ if(ISProduction) {
     pool = new Pool({
         user: 'postgres',
         host: 'localhost',
-        database: 'bd_marcenaria',
-        password: '1808amor', //1808amor
+        database: 'BD_Marcenaria',
+        password: 'postgres', //1808amor
         port: 5432
     })
 }
