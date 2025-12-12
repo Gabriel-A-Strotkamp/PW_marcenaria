@@ -11,6 +11,7 @@ import {
 import Tabela from "./Tabela";
 import Formulario from "./formulario";
 import { useNavigate } from "react-router-dom";
+import WithAuth from "../../../seguranca/WithAuth";
 
 function Materiais() {
 
@@ -119,4 +120,4 @@ function Materiais() {
     );
 }
 
-export default Materiais;
+export default WithAuth(Materiais);

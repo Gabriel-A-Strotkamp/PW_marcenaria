@@ -11,6 +11,7 @@ import {
 import Tabela from "./tabela";
 import Formulario from "./formulario";
 import { useNavigate } from "react-router-dom";
+import WithAuth from "../../../seguranca/WithAuth";
 
 function Pedidos() {
 
@@ -127,4 +128,4 @@ function Pedidos() {
     );
 }
 
-export default Pedidos;
+export default WithAuth(Pedidos);

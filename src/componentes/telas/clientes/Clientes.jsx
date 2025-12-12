@@ -11,6 +11,7 @@ import Tabela from './tabela';
 import Formulario from './formulario';
 import Carregando from '../../comuns/carregando';
 import { useNavigate } from "react-router-dom";
+import WithAuth from "../../../seguranca/WithAuth";
 
 function Clientes() {
     
@@ -111,4 +112,4 @@ function Clientes() {
     );
 }
 
-export default Clientes;
+export default WithAuth(Clientes);
